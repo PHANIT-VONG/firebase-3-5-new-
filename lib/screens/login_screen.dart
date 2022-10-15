@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_3_5/screens/home_screen.dart';
+import 'package:firebase_3_5/services/authentication.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
+import 'package:get/get.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({Key? key}) : super(key: key);
@@ -11,28 +12,6 @@ class LogInScreen extends StatefulWidget {
 }
 
 class _LogInScreenState extends State<LogInScreen> {
-  Future login(String email, String password) async {
-    try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-            email: email,
-            password: password,
-          )
-          .then((value) => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const HomeScreen(),
-                ),
-              ));
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        debugPrint('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        debugPrint('Wrong password provided for that user.');
-      }
-    }
-  }
-
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
 
@@ -62,8 +41,16 @@ class _LogInScreenState extends State<LogInScreen> {
               const SizedBox(height: 30),
               CupertinoButton.filled(
                 child: const Text('Login'),
-                onPressed: () {
-                  login(email.text.trim(), password.text.trim());
+                onPressed: () async {
+                  bool? callBack = await AuthenticationService().login(
+                    email.text.trim(),
+                    password.text.trim(),
+                  );
+                  if (callBack != null && callBack) {
+                    Get.off(const HomeScreen());
+                  } else {
+                    debugPrint('Login faile');
+                  }
                 },
               ),
             ],
