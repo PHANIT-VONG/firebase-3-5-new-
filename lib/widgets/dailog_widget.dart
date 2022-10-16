@@ -23,4 +23,26 @@ class DailogWidget {
       ],
     );
   }
+
+  static Future<void> showLoading(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SizedBox(
+            height: 70.0,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: const [
+                CircularProgressIndicator(),
+                SizedBox(height: 15.0),
+                Text('Loading...'),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
